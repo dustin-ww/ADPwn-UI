@@ -20,35 +20,50 @@ const navbarlinks = [
     target: '_blank' 
   }, {
     label: 'More',
-    icon: 'mdi:unfold-more-vertical'
+    icon: 'mdi:unfold-more-vertical',
     to: 'https://dw-security.com/',
     target: '_blank'
   }]
 ]
 
 
-const links = [
+const sidebarlinks = [
   {
-    label: 'Profile',
+    label: 'Project',
     avatar: {
       src: 'https://avatars.githubusercontent.com/u/739984?v=4'
     },
     badge: 100
   },
   {
-    label: 'Installation',
+    label: 'Dashboard',
     icon: 'i-heroicons-home',
     to: '/'
   },
   {
-    label: 'Horizontal Navigation',
+    label: 'Hosts',
     icon: 'i-heroicons-chart-bar',
-    to: '/'
+    to: '/hosts'
   },
   {
-    label: 'Command Palette',
+    label: 'Services',
     icon: 'i-heroicons-command-line',
-    to: '/'
+    to: '/services'
+  },
+  {
+    label: 'Users',
+    icon: 'i-heroicons-command-line',
+    to: '/users'
+  },
+  {
+    label: 'Logs',
+    icon: 'i-heroicons-command-line',
+    to: '/logs'
+  },
+  {
+    label: 'Loot',
+    icon: 'i-heroicons-command-line',
+    to: '/loot'
   }
 ]
 </script>
@@ -56,25 +71,17 @@ const links = [
 <template>
   <div class="min-h-screen flex flex-col">
     <!-- Navbar -->
-    <HorizontalNavBar :links="navbarlinks" />
+    <NavigationNavbar :links="navbarlinks" />
     <div class="grid grid-cols-10 flex-grow">
         <div class="col-span-1">
-            <VerticalNavBar :links="links" class="wi"/>
+            <NavigationSidebar :links="sidebarlinks" class="wi"/>
         </div>
-        <div>
+        <div class="col-span-9">
             <main>
                 <slot />
             </main>
         </div>
     </div>
-    
 
-    <!-- Hauptinhalt -->
-    
-
-    <!-- Footer -->
-    <footer class="p-4 bg-gray-100 dark:bg-gray-800 text-center object-bottom">
-      <p>&copy; 2025 ADPwn</p>
-    </footer>
   </div>
 </template>
