@@ -1,5 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  runtimeConfig: {
+    // Server-seitige Konfiguration (nicht im Browser verfügbar)
+    apiSecret: process.env.API_SECRET,
+    
+    // Browser-verfügbare Konfiguration
+    public: {
+      apiBaseUrl: process.env.API_BASE_URL || 'http://127.0.0.1:8081'
+    }
+  },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   modules: ['@nuxt/ui', '@nuxt/icon'],

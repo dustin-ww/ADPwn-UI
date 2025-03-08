@@ -19,6 +19,7 @@
     "yup": "^1.6.1"
   },
   "devDependencies": {
+    "@iconify-json/material-symbols": "^1.2.15",
     "@iconify-json/mdi": "^1.2.3"
   }
 }

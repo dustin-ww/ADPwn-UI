@@ -33,36 +33,37 @@ const sidebarlinks = [
     avatar: {
       src: 'https://avatars.githubusercontent.com/u/739984?v=4'
     },
-    badge: 100
+    badge: 100,
+    to: '/project'
   },
   {
     label: 'Dashboard',
-    icon: 'i-heroicons-home',
+    icon: 'material-symbols:dashboard',
     to: '/'
   },
   {
     label: 'Hosts',
-    icon: 'i-heroicons-chart-bar',
+    icon: 'material-symbols:host',
     to: '/hosts'
   },
   {
     label: 'Services',
-    icon: 'i-heroicons-command-line',
+    icon: 'material-symbols:tools-wrench-outline-sharp',
     to: '/services'
   },
   {
     label: 'Users',
-    icon: 'i-heroicons-command-line',
+    icon: 'material-symbols:supervisor-account',
     to: '/users'
   },
   {
     label: 'Logs',
-    icon: 'i-heroicons-command-line',
+    icon: 'material-symbols:book-2-outline-rounded',
     to: '/logs'
   },
   {
     label: 'Loot',
-    icon: 'i-heroicons-command-line',
+    icon: 'material-symbols:money-bag',
     to: '/loot'
   }
 ]
@@ -75,6 +76,7 @@ const sidebarlinks = [
     <div class="grid grid-cols-10 flex-grow">
         <div class="col-span-1">
             <NavigationSidebar :links="sidebarlinks" class="wi"/>
+            <StatusViewer />
         </div>
         <div class="col-span-9">
             <main>
