@@ -1,93 +1,48 @@
-<script setup lang='ts'>
-const people = [{
-  id: 1,
-  name: 'ADPwn 1',
-  description: 'Example Project',
-  created_at: '09-04-2010',
-  hasExpand: true
-}, {
-  id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin',
-  hasExpand: true
-}, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member',
-  hasExpand: true
-}, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin',
-  hasExpand: true
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner',
-  hasExpand: true
-}, {
-  id: 6,
-  name: 'Floyd Miles',
-  title: 'Principal Designer',
-  email: 'floyd.miles@example.com',
-  role: 'Member',
-  hasExpand: true
-}]
+<script setup lang="ts">
+import { date, object, string, type InferType } from 'yup'
+import type { FormSubmitEvent } from '#ui/types'
+import { useProjectsApi } from '~/composable/useProjectApi'
 
-const expand = ref({
-  openedRows: [people.find(v => v.hasExpand)],
-  row: {}
+const schema = object({
+  email: string().email('Invalid email').required('Required'),
+  password: string()
+    .min(8, 'Must be at least 8 characters')
+    .required('Required')
 })
 
-const isOpen = ref(false)
+type Schema = InferType<typeof schema>
+
+const state = reactive({
+  email: undefined,
+  password: undefined
+})
+
+const localProjectStore = useProjectStore()
+const projectsApi = useProjectsApi() 
+const { data: project, refresh } = await useAsyncData('projects', () => projectsApi.getProject(localProjectStore.project.id))
+
+
+async function onSubmit(event: FormSubmitEvent<Schema>) {
+  // Do something with event.data
+  console.log(event.data)
+}
 </script>
 
 <template>
-  <div class="m-2">
-    <div class="grid grid-flow-col">
-      <h1 class="text-3xl">Projects</h1>
-      <div class="justify-self-end">
-        <UButton label="Create New" @click="isOpen = true" />
-        <UModal v-model="isOpen">
-          <div class="p-4">
-            <FormCreateProject />
-          </div>
-        </UModal>
-      </div>
-    </div>
-    <UTable v-model:expand="expand" :rows="people">
-      <template #expand="{ row }">
-        <div class="p-4">
-          <pre>{{ row }}</pre>
-        </div>
-      </template>
-      <template #expand-action="{ row, isExpanded, toggle }">
-        <div v-if="row.hasExpand" class="flex gap-2 items-center">
-          <UIcon 
-            :name="isExpanded ? 'i-heroicons:x-mark' : 'i-heroicons:information-circle'" 
-            class="w-5 h-5 cursor-pointer text-gray-500 hover:text-gray-700"
-            @click="toggle"
-          />
-          <UButton @click="loadData(row)" color="red">
-            Load
-          </UButton>
-        </div>
-      </template>
-      <template #empty-state>
-        <div class="flex flex-col items-center justify-center py-6 gap-3">
-          <span class="italic text-sm">No one here!</span>
-          <UButton label="Add people" />
-        </div>
-      </template>
-    </UTable>
-  </div>
+  <h1>Edit Project</h1>
+  <h2>{{ project?.name }}</h2>
+  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
+    <UFormGroup label="Name" name="name" >
+      <UInput :placeholder="project?.name" v-model="state.email" />
+    </UFormGroup>
+
+    <UFormGroup label="Password" name="password">
+      <UInput v-model="state.password" type="password" />
+    </UFormGroup>
+
+    <UButton type="submit">
+      Submit
+    </UButton>
+  </UForm>
 </template>
 

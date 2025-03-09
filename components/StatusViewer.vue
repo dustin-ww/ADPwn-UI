@@ -2,20 +2,19 @@
 import { ref, onMounted } from 'vue';
 import { useStatusApi } from '~/composable/useStatusApi';
 
-const { getStatus } = useStatusApi(); // Make sure this matches your actual function name
-const apiStatus = ref('Loading...'); // Initial state
-const isOnline = ref(false); // To control the icon color
+const { getStatus } = useStatusApi(); 
+const apiStatus = ref('Loading...'); 
+const isOnline = ref(false); 
 
-// Load data when component mounts
 onMounted(async () => {
   try {
     const { data, error } = await getStatus();
     
     if (error.value) {
-      apiStatus.value = 'API Offline';
+      apiStatus.value = 'Offline';
       isOnline.value = false;
     } else {
-      apiStatus.value = 'API Online';
+      apiStatus.value = 'Online';
       isOnline.value = true;
     }
   } catch (err) {
@@ -26,12 +25,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="flex self-end h-max">
-    <p>Api Status: {{ apiStatus }}</p>
-    <UIcon
-      name="material-symbols:expand-circle-down"
-      :style="{ color: isOnline ? 'green' : 'red' }"
-      class="w-5 h-5"
-    />
+  <div class="flex self-end h-max cursor-default w-full">
+    <div class="flex items-center justify-center w-full gap-2">
+      <p class="text-gray-400">API: {{ apiStatus }}</p>
+      <UIcon
+        name="material-symbols:circle"
+        :style="{ color: isOnline ? 'green' : 'red' }"
+        class="w-5 h-5"
+      />
+    </div>
   </div>
 </template>

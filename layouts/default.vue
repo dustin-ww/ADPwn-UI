@@ -2,17 +2,13 @@
 
 const navbarlinks = [
   [{
-    label: 'Installation',
-    icon: 'i-heroicons-home',
-    to: '/getting-started/installation'
-  }, {
-    label: 'Horizontal Navigation',
+    label: 'Scripts',
     icon: 'i-heroicons-chart-bar',
-    to: '/components/horizontal-navigation'
+    to: '/'
   }, {
-    label: 'Command Palette',
+    label: 'Network',
     icon: 'i-heroicons-command-line',
-    to: '/components/command-palette'
+    to: '/network'
   }], [{
     label: 'Github',
     icon: 'mdi:github',
@@ -29,17 +25,14 @@ const navbarlinks = [
 
 const sidebarlinks = [
   {
-    label: 'Project',
-    avatar: {
-      src: 'https://avatars.githubusercontent.com/u/739984?v=4'
-    },
-    badge: 100,
-    to: '/project'
-  },
-  {
     label: 'Dashboard',
     icon: 'material-symbols:dashboard',
     to: '/'
+  },
+  {
+    label: 'Project',
+    icon: 'material-symbols:assignment-add-outline',
+    to: '/project'
   },
   {
     label: 'Hosts',
@@ -70,20 +63,36 @@ const sidebarlinks = [
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="flex flex-col h-screen overflow-hidden">
     <!-- Navbar -->
-    <NavigationNavbar :links="navbarlinks" />
-    <div class="grid grid-cols-10 flex-grow">
-        <div class="col-span-1">
-            <NavigationSidebar :links="sidebarlinks" class="wi"/>
-            <StatusViewer />
-        </div>
-        <div class="col-span-9">
-            <main>
-                <slot />
-            </main>
-        </div>
+    <div class="grid grid-cols-10 flex-shrink-0">
+      <div class="col-span-1">
+        <ProjectSelector></ProjectSelector>
+      </div>
+      <div class="col-span-9">
+        <NavigationNavbar :links="navbarlinks"/>
+      </div>
     </div>
-
+    
+    <!-- Main Content Area -->
+    <div class="grid grid-cols-10 flex-grow overflow-hidden">
+      <div class="col-span-1 flex flex-col justify-between">
+        <!-- Navigation oben -->
+        <div class="overflow-y-auto">
+          <NavigationSidebar :links="sidebarlinks" />
+        </div>
+        
+        <!-- StatusViewer unten -->
+        <div class="mt-auto">
+          <StatusViewer />
+        </div>
+      </div>
+      
+      <div class="col-span-9 overflow-auto">
+        <main class="h-full">
+          <slot />
+        </main>
+      </div>
+    </div>
   </div>
 </template>

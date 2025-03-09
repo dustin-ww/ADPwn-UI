@@ -12,7 +12,10 @@
   "dependencies": {
     "@nuxt/icon": "^1.10.3",
     "@nuxt/ui": "^2.21.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
+    "@pinia/nuxt": "^0.10.1",
     "nuxt": "^3.15.4",
+    "pinia": "^3.0.1",
     "v-network-graph": "^0.9.20",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",

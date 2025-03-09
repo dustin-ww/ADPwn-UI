@@ -16,11 +16,6 @@
         </div>
      <!-- Hauptinhalt -->
     
-
-    <!-- Footer -->
-    <footer class="p-4 bg-gray-100 dark:bg-gray-800 text-center object-bottom">
-      <p>&copy; 2025 ADPwn</p>
-    </footer>
         <!-- Dritte Zeile: DashboardLogOverview -->
         <div>
           <DashboardLogOverview />

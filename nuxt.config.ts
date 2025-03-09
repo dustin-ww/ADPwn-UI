@@ -11,7 +11,14 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@nuxt/icon'],
+  modules: ['@nuxt/ui', '@nuxt/icon', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'],
+  piniaPersistedstate: {
+    cookieOptions: {
+      sameSite: 'strict',
+    },
+    // Verwende automatisch Cookies für SSR und localStorage im Browser
+    storage: import.meta.client ? 'localStorage' : 'cookies'
+  },
   css: ["v-network-graph/lib/style.css"],
   app: {
     head: {
