@@ -3,8 +3,9 @@
 </script>
 
 <template>
-    <div class="w-full h-screen bg-primary-red"> <!-- h-screen für 100% der Bildschirmhöhe -->
-      <div class="m-1 bg-black h-full grid grid-rows-[2fr,1fr,1fr,1fr]"> <!-- grid-rows für die Zeilenaufteilung -->
+    <div class="w-full h-screen"> <!-- h-screen für 100% der Bildschirmhöhe -->
+      <SharedHeading heading="Dashboard"></SharedHeading>
+      <div class="m-1 h-full grid grid-rows-[2fr,1fr,1fr,1fr]"> <!-- grid-rows für die Zeilenaufteilung -->
         <!-- Erste Zeile: DashboardGraphOverview (größer) -->
         <div class="row-span-4"> <!-- row-span-2 für doppelte Höhe -->
           <DashboardGraphOverview />
@@ -17,9 +18,9 @@
      <!-- Hauptinhalt -->
     
         <!-- Dritte Zeile: DashboardLogOverview -->
-        <div>
+        <!-- <div>
           <DashboardLogOverview />
-        </div>
+        </div> -->
   
         <!-- Vierte Zeile: DashboardModuleOverview -->
         <div>

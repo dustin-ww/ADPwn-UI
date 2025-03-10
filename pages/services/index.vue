@@ -1,3 +1,3 @@
 <template>
-    <h1>Services</h1>
+    <SharedHeading heading="Edit Projects"/>
 </template>

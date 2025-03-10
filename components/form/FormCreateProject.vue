@@ -80,6 +80,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         :loading="isLoading"
         block
         variant="solid"
+        color="red"
         :disabled="isLoading"
       >
         {{ isLoading ? 'Creating...' : 'Create Project' }}

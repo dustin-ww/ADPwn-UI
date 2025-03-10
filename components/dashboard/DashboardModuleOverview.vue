@@ -1,67 +1,54 @@
 <script setup lang="ts">
-const people = [{
-  id: 1,
-  name: 'Lindsay Walton',
-  title: 'Front-end Developer',
-  email: 'lindsay.walton@example.com',
-  role: 'Member'
-}, {
-  id: 2,
-  name: 'Courtney Henry',
-  title: 'Designer',
-  email: 'courtney.henry@example.com',
-  role: 'Admin'
-}, {
-  id: 3,
-  name: 'Tom Cook',
-  title: 'Director of Product',
-  email: 'tom.cook@example.com',
-  role: 'Member'
-}, {
-  id: 4,
-  name: 'Whitney Francis',
-  title: 'Copywriter',
-  email: 'whitney.francis@example.com',
-  role: 'Admin'
-}, {
-  id: 5,
-  name: 'Leonard Krasner',
-  title: 'Senior Designer',
-  email: 'leonard.krasner@example.com',
-  role: 'Owner'
-}]
+import { useADPwnModuleApi } from '~/composable/useADPwnModuleApi';
 
-const virtualElement = ref({ getBoundingClientRect: () => ({}) })
-const contextMenuRow = ref()
+const ncolumns = [
+  { key: 'name', label: 'Name', sortable: true, direction: 'desc' as const },
+  { key: 'description', label: 'Description' },
+  { key: 'version', label: 'Version'},
+  { key: 'author', label: 'Author'},
+  { key: 'actions', label: 'Actions' } // Neue Aktionsspalte
+]
 
-function contextmenu(event: MouseEvent, row: any) {
-  // Prevent the default context menu
-  event.preventDefault()
+const adpwnModuleApi = useADPwnModuleApi()
+const { data: modules, refresh } = await useAsyncData('modules', () => adpwnModuleApi.getAllModules())
 
-  virtualElement.value.getBoundingClientRect = () => ({
-    width: 0,
-    height: 0,
-    top: event.clientY,
-    left: event.clientX
-  })
+const tableRows = computed(() => {
+  return modules.value?.map(module => ({
+    id: module.id, // Stellen Sie sicher, dass die Module eine ID haben
+    name: module.name,
+    description: module.description,
+    version: module.version,
+    author: module.author,
+    actions: module.id // ID für die Aktion
+  })) || []
+})
 
-  contextMenuRow.value = row
+// Run-Methode
+const runModule = async (moduleId: string) => {
+  try {
+    //await adpwnModuleApi.executeModule(moduleId)
+    console.log("Hi")
+    // Erfolgsmeldung anzeigen
+  } catch (error) {
+    // Fehlerbehandlung
+  }
 }
 </script>
 
 <template>
-  <div>
-    <UTable :rows="people" @contextmenu.stop="contextmenu" />
-
-    <UContextMenu
-      :virtual-element="virtualElement"
-      :model-value="!!contextMenuRow"
-      @update:model-value="contextMenuRow = null"
-    >
-      <div class="p-4">
-        {{ contextMenuRow.id }} - {{ contextMenuRow.name }}
-      </div>
-    </UContextMenu>
-  </div>
+  <UTable 
+    :columns="ncolumns" 
+    :rows="tableRows"
+  >
+    <!-- Custom Slot für die Actions-Spalte -->
+    <template #actions-data="{ row }">
+      <UButton
+        variant="ghost"
+        color="primary"
+        icon="i-heroicons-play-20-solid"
+        @click="runModule(row.id)"
+        title="Modul ausführen"
+      />
+    </template>
+  </UTable>
 </template>
-

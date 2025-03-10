@@ -9,7 +9,6 @@ const isOnline = ref(false);
 onMounted(async () => {
   try {
     const { data, error } = await getStatus();
-    
     if (error.value) {
       apiStatus.value = 'Offline';
       isOnline.value = false;

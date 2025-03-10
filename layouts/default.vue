@@ -6,6 +6,11 @@ const navbarlinks = [
     icon: 'i-heroicons-chart-bar',
     to: '/'
   }, {
+    label: 'Collections',
+    icon: 'i-heroicons-command-line',
+    to: '/collections'
+  },
+  {
     label: 'Network',
     icon: 'i-heroicons-command-line',
     to: '/network'
@@ -49,6 +54,7 @@ const sidebarlinks = [
     icon: 'material-symbols:supervisor-account',
     to: '/users'
   },
+  { type: 'divider' },
   {
     label: 'Logs',
     icon: 'material-symbols:book-2-outline-rounded',

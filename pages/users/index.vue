@@ -1,3 +1,3 @@
 <template>
-    <h1>Users</h1>
+    <SharedHeading heading="Manage Users"></SharedHeading>
 </template>

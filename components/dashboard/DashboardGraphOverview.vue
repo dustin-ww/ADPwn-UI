@@ -36,6 +36,7 @@ const eventHandlers: vNG.EventHandlers = {
   "node:click": ({ node }) => {
     // toggle
     console.log("clicked")
+    alert("clicked")
   },
 }
 

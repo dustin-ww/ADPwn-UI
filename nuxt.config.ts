@@ -11,7 +11,12 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
-  modules: ['@nuxt/ui', '@nuxt/icon', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'],
+  modules: [
+    '@nuxt/ui',
+    '@nuxt/icon',
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
+  ],
   piniaPersistedstate: {
     cookieOptions: {
       sameSite: 'strict',
@@ -22,7 +27,7 @@ export default defineNuxtConfig({
   css: ["v-network-graph/lib/style.css"],
   app: {
     head: {
-      title: 'ADPwn - UI', // default fallback title
+      title: 'ADPwn', // default fallback title
       htmlAttrs: {
         lang: 'en',
       },
@@ -30,5 +35,5 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       ]
     }
-  }
+  },
 })

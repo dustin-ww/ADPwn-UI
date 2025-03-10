@@ -2,47 +2,119 @@
 import { date, object, string, type InferType } from 'yup'
 import type { FormSubmitEvent } from '#ui/types'
 import { useProjectsApi } from '~/composable/useProjectApi'
+import { ProjectUpdateSchema, type ProjectUpdate } from '~/schemas/project'
+import type { RefSymbol } from '@vue/reactivity'
 
-const schema = object({
-  email: string().email('Invalid email').required('Required'),
-  password: string()
-    .min(8, 'Must be at least 8 characters')
-    .required('Required')
+definePageMeta({
+  layout: 'default'
 })
 
-type Schema = InferType<typeof schema>
-
-const state = reactive({
-  email: undefined,
-  password: undefined
+const projectSchema = object({
+  name: string().required('Required'),
+  description: string()
 })
+
 
 const localProjectStore = useProjectStore()
-const projectsApi = useProjectsApi() 
-const { data: project, refresh } = await useAsyncData('projects', () => projectsApi.getProject(localProjectStore.project.id))
+const projectsApi = useProjectsApi()
+const { data: project, refresh } = await useAsyncData('projects', () => 
+  projectsApi.getProject(localProjectStore.project.id)
+)
+
+const toast = useToast()
+
+// Zuerst mit leeren Werten initialisieren
+const projectState = reactive({
+  name: '',
+  description: ''
+})
+
+// Dann mit watch aktualisieren, wenn Projektdaten geladen sind
+watch(() => project.value, (newProject) => {
+  if (newProject) {
+    projectState.name = newProject.name || ''
+    projectState.description = newProject.description || ''
+  }
+}, { immediate: true })
+
+const onSubmit = async (event: FormSubmitEvent<ProjectUpdate>) => {
+  try {
+    // Wir verwenden die Daten aus dem Event
+    const values = event.data || projectState
+    
+    // Erstellen eines leeren Aktualisierungsobjekts
+    const updateData: Partial<ProjectUpdate> = {}
+    
+    // Debug-Ausgaben
+    alert("Ursprüngliche Werte: " + project.value?.name + ", " + project.value?.description)
+    alert("Neue Werte: " + values.name + ", " + values.description)
+    
+    // Vergleich mit expliziten String-Konvertierungen und Trim
+    if (values.name?.trim() !== (project.value?.name || '').trim()) {
+      updateData.name = values.name
+      alert("Name wird aktualisiert: " + values.name)
+    }
+    
+    if (values.description?.trim() !== (project.value?.description || '').trim()) {
+      updateData.description = values.description
+      alert("Beschreibung wird aktualisiert: " + values.description)
+    }
+    
+    alert("UID: " + project.value?.uid)
+    alert("Update-Daten: " + JSON.stringify(updateData))
+    
+    if (Object.keys(updateData).length === 0) {
+      toast.add({ title: 'No changes detected', color: 'yellow' })
+      return
+    }
+    
+    await projectsApi.updateProject(project.value!.uid, updateData)
+    toast.add({
+      title: 'Project Update successful',
+      color: 'green',
+      timeout: 3000
+    })
 
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
-  // Do something with event.data
-  console.log(event.data)
+    await refreshNuxtData()
+    await nextTick()
+    const updatedName = updateData.name || project.value!.name 
+    localProjectStore.setProject(project.value!.uid, updatedName)
+
+
+  } catch (error) {
+    toast.add({
+      title: 'Update failed',
+      description: error.message,
+      color: 'red',
+      timeout: 5000
+    })
+  }
 }
+
+const selected = ref([])
+const isSingleTargetCreationOpen = ref(false)
+const isTargetRangeCreationOpen = ref(false)
+const singleTargetIP = ref('')
 </script>
 
 <template>
-  <h1>Edit Project</h1>
-  <h2>{{ project?.name }}</h2>
-  <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="Name" name="name" >
-      <UInput :placeholder="project?.name" v-model="state.email" />
-    </UFormGroup>
-
-    <UFormGroup label="Password" name="password">
-      <UInput v-model="state.password" type="password" />
-    </UFormGroup>
-
-    <UButton type="submit">
-      Submit
-    </UButton>
-  </UForm>
+  <SharedHeading heading="Manage Project"></SharedHeading>
+  <div class="grid justify-items-center">
+    <UForm :schema="projectSchema" :state="projectState" class="space-y-4 w-2/5" @submit="onSubmit">
+      <UFormGroup label="UID" name="uid" >
+        <UInput disabled :placeholder="project?.uid"/>
+      </UFormGroup>
+      <UFormGroup label="Name" name="name" >
+        <UInput :placeholder="project?.name" v-model="projectState.name" />
+      </UFormGroup>
+      <UFormGroup label="Description" name="description">
+        <UTextarea :placeholder="project?.description" v-model="projectState.description"/>
+      </UFormGroup>
+      <UButton color="red" type="submit">
+        Update
+      </UButton>
+    </UForm>
+    <TargetList />
+  </div>
 </template>
-
