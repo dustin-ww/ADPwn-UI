@@ -55,7 +55,6 @@ const people = [{
 }]
 
 const q = ref('')
-const isOpen = ref(false)
 
 const filteredRows = computed(() => {
   if (!q.value) {
@@ -71,22 +70,12 @@ const filteredRows = computed(() => {
 </script>
 
 <template>
-<SharedHeading heading="Manage Users"></SharedHeading>
   <div>
     <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-      <UInput v-model="q" placeholder="Filter user..." />
-      <UButton color="red" label="Add User" @click="isOpen = true" />
-
+      <UInput v-model="q" placeholder="Filter people..." />
     </div>
 
-    <UTable :rows="filteredRows" :columns="columns" :empty-state="{ icon: 'i-heroicons-circle-stack-20-solid', label: 'No items.' }"/>
-  
-  
-    <UModal v-model="isOpen">
-      <div class="p-4">
-        <FormCreateUser/>
-      </div>
-    </UModal>
+    <UTable :rows="filteredRows" :columns="columns" />
   </div>
 </template>
 

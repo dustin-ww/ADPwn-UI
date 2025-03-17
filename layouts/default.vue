@@ -40,6 +40,11 @@ const sidebarlinks = [
     to: '/project'
   },
   {
+    label: 'Domains',
+    icon: 'material-symbols:assignment-add-outline',
+    to: '/domains'
+  },
+  {
     label: 'Hosts',
     icon: 'material-symbols:host',
     to: '/hosts'

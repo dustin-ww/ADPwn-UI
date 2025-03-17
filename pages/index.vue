@@ -12,9 +12,9 @@
         </div>
   
         <!-- Zweite Zeile: DashboardRunningOverview -->
-        <div>
+        <!-- <div>
           <DashboardRunningOverview />
-        </div>
+        </div> -->
      <!-- Hauptinhalt -->
     
         <!-- Dritte Zeile: DashboardLogOverview -->
