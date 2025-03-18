@@ -2,8 +2,13 @@
 import { reactive, onMounted, ref } from "vue"
 import * as vNG from "v-network-graph"
 import { useADPwnModuleApi } from '~/composable/useADPwnModuleApi';
+import { type ADPwnInheritanceGraph } from "~/types";
 
-const { getModuleInheritanceGraph } = useADPwnModuleApi()
+// Stelle sicher, dass dagre nur clientseitig importiert wird
+let dagre: any = null
+
+// Prüfe ob wir auf Client-Seite sind
+const isClient = process.client
 
 interface Node extends vNG.Node {
   size: number
@@ -17,57 +22,54 @@ interface Edge extends vNG.Edge {
   dashed?: boolean
 }
 
-// State for the graph
+// State für den Graph
 const nodes = ref<Record<string, Node>>({})
 const edges = ref<Record<string, Edge>>({})
 const layouts = ref<{ nodes: Record<string, { x: number, y: number }> }>({ nodes: {} })
 const loading = ref(true)
 const error = ref<string | null>(null)
+const graph = ref<vNG.VNetworkGraphInstance>()
+const nodeSize = 40
 
-// Function to convert ADPwnInheritanceGraph to v-network-graph format
+// Funktion zur Konvertierung von ADPwnInheritanceGraph zu v-network-graph Format
 const convertToGraphFormat = (graph: ADPwnInheritanceGraph) => {
   const graphNodes: Record<string, Node> = {}
   const graphEdges: Record<string, Edge> = {}
   const nodeLayouts: Record<string, { x: number, y: number }> = {}
   
-  // Map node colors based on module type
+  // Farben für Knotentypen
   const getNodeColor = (moduleType: string) => {
     switch(moduleType) {
-      case 'ATTACK': return '#ff5252'
-      case 'RECON': return '#4caf50'
+      case 'AttackModule': return '#ff5252'
+      case 'EnumerationModule': return '#4caf50'
       case 'EXPLOIT': return '#ff9800'
       case 'POST_EXPLOIT': return '#2196f3'
       default: return '#9c27b0'
     }
   }
 
-  // Create nodes
+  // Knoten erstellen
   graph.nodes.forEach((module, index) => {
     const nodeId = module.key
     graphNodes[nodeId] = {
       name: module.name,
-      size: 20,
+      size: nodeSize,
       color: getNodeColor(module.module_type),
       label: true
     }
     
-    // Simple layout algorithm - place nodes in a grid
-    const row = Math.floor(index / 5)
-    const col = index % 5
-    nodeLayouts[nodeId] = { 
-      x: col * 160, 
-      y: row * 120 
-    }
+    // Initiale Position - wird später durch dagre überschrieben
+    nodeLayouts[nodeId] = { x: 0, y: 0 }
   })
   
-  // Create edges
+  // Kanten erstellen
   graph.edges.forEach((edge, index) => {
     const edgeId = `edge${index}`
     graphEdges[edgeId] = {
       source: edge.previous_module,
       target: edge.next_module,
-      width: 2,
-      color: '#ffffff',
+      width: 3,
+      color: '#aaaaaa',
       dashed: false
     }
   })
@@ -81,10 +83,10 @@ const convertToGraphFormat = (graph: ADPwnInheritanceGraph) => {
   }
 }
 
-// Event handlers
+// Event Handler
 const eventHandlers: vNG.EventHandlers = {
   "node:click": ({ node }) => {
-    // Display module details
+    // Moduldetails anzeigen
     const moduleKey = node as string
     const module = graphData.value?.nodes.find(n => n.key === moduleKey)
     if (module) {
@@ -93,22 +95,31 @@ const eventHandlers: vNG.EventHandlers = {
   },
 }
 
-// Reactive configurations
+// Reaktive Konfigurationen
 const configs = reactive(
   vNG.defineConfigs<Node, Edge>({
+    view: {
+      autoPanAndZoomOnLoad: "fit-content",
+      onBeforeInitialDisplay: () => {
+        if (isClient && dagre) {
+          layout("TB")
+        }
+      },
+    },
     node: {
       normal: {
         type: "circle",
-        radius: node => node.size,
+        radius: node => node.size / 2,
         color: node => node.color,
       },
       hover: {
-        radius: node => node.size + 5,
+        radius: node => node.size / 2 + 5,
         color: node => node.color,
       },
       selectable: true,
       label: {
         visible: node => !!node.label,
+        direction: "center",
         color: "#ffffff",
         fontSize: 12,
         fontFamily: "Arial, sans-serif",
@@ -126,51 +137,165 @@ const configs = reactive(
       hover: {
         width: edge => edge.width + 1,
       },
+      margin: 4,
+      marker: {
+        source: {
+          type: "none",
+          width: 4,
+          height: 4,
+          margin: -1,
+          offset: 0,
+          units: "strokeWidth",
+          color: null,
+        },
+        target: {
+          type: "arrow",
+          width: 4,
+          height: 4,
+          margin: -1,
+          offset: 0,
+          units: "strokeWidth",
+          color: null,
+        }
+      }
     },
   })
 );
 
-// Store the raw graph data
+// Rohdaten des Graphen speichern
 const graphData = ref<ADPwnInheritanceGraph | null>(null)
 
-// Load data on component mount
+const { getModuleInheritanceGraph } = useADPwnModuleApi()
+
+// Layout-Funktionen mit dagre
+function layout(direction: "TB" | "LR") {
+  if (!dagre || Object.keys(nodes.value).length <= 1 || Object.keys(edges.value).length === 0) {
+    return
+  }
+  
+  // Graph für dagre konvertieren
+  const g = new dagre.graphlib.Graph()
+  
+  // Graph-Eigenschaften setzen
+  g.setGraph({
+    rankdir: direction,
+    nodesep: nodeSize * 2,
+    edgesep: nodeSize,
+    ranksep: nodeSize * 2,
+  })
+  
+  // Standard-Edge-Label
+  g.setDefaultEdgeLabel(() => ({}))
+  
+  // Knoten zu dagre-Graph hinzufügen
+  Object.entries(nodes.value).forEach(([nodeId, node]) => {
+    g.setNode(nodeId, { label: node.name, width: nodeSize, height: nodeSize })
+  })
+  
+  // Kanten zu dagre-Graph hinzufügen
+  Object.values(edges.value).forEach(edge => {
+    g.setEdge(edge.source, edge.target)
+  })
+  
+  // Layout ausführen
+  dagre.layout(g)
+  
+  // Knotenpositionen aktualisieren
+  const newLayouts = { nodes: { ...layouts.value.nodes } }
+  g.nodes().forEach((nodeId: string) => {
+    const x = g.node(nodeId).x
+    const y = g.node(nodeId).y
+    newLayouts.nodes[nodeId] = { x, y }
+  })
+  
+  layouts.value = newLayouts
+}
+
+function updateLayout(direction: "TB" | "LR") {
+  if (!dagre) return
+  
+  // Animation beim Bewegen der Elemente
+  graph.value?.transitionWhile(() => {
+    layout(direction)
+  })
+}
+
 onMounted(async () => {
+  // only on client
+  if (isClient) {
+    try {
+      dagre = await import('dagre').then(m => m.default || m)
+    } catch (e) {
+      console.error('Fehler beim Laden der dagre-Bibliothek:', e)
+    }
+  }
+  
   try {
     loading.value = true
     const data = await getModuleInheritanceGraph()
     graphData.value = data
     
-    // Convert to graph format
+    // In Graph-Format konvertieren
     const formattedGraph = convertToGraphFormat(data)
     nodes.value = formattedGraph.nodes
     edges.value = formattedGraph.edges
     layouts.value = formattedGraph.layouts
+    
+    // Initial Layout berechnen (wenn dagre geladen ist)
+    if (dagre) {
+      layout("TB")
+    }
     
     loading.value = false
   } catch (err) {
     if (err instanceof Error) {
       error.value = err.message
     } else {
-      error.value = 'An unknown error occurred'
+      error.value = 'Ein unbekannter Fehler ist aufgetreten'
     }
     loading.value = false
   }
 })
+
+// Plugin in defineNuxtPlugin registrieren, falls notwendig (in separater Datei)
+/* 
+plugins/v-network-graph.client.ts:
+import { defineNuxtPlugin } from '#app'
+import VNetworkGraph from 'v-network-graph'
+import 'v-network-graph/lib/style.css'
+
+export default defineNuxtPlugin((nuxtApp) => {
+  nuxtApp.vueApp.use(VNetworkGraph)
+})
+*/
 </script>
 
 <template>
-  <div class="graph-container">
-    <div v-if="loading" class="loading">Loading module inheritance graph...</div>
-    <div v-else-if="error" class="error">{{ error }}</div>
-    <v-network-graph
-      v-else
-      :nodes="nodes"
-      :edges="edges"
-      :layouts="layouts"
-      :configs="configs"
-      :event-handlers="eventHandlers"
-    />
-  </div>
+  <ClientOnly>
+    <div class="graph-container">
+      <div v-if="loading" class="loading">Lade Modul-Vererbungsgraph...</div>
+      <div v-else-if="error" class="error">{{ error }}</div>
+      <template v-else>
+        <div class="control-panel">
+          <!-- <button @click="updateLayout('LR')" class="control-button">Layout: Links nach Rechts</button>
+          <button @click="updateLayout('TB')" class="control-button">Layout: Oben nach Unten</button> -->
+        </div>
+        <v-network-graph
+          ref="graph"
+          :nodes="nodes"
+          :edges="edges"
+          :layouts="layouts"
+          :configs="configs"
+          :event-handlers="eventHandlers"
+        />
+      </template>
+    </div>
+    <template #fallback>
+      <div class="loading-fallback">
+        Lade Graph-Komponente...
+      </div>
+    </template>
+  </ClientOnly>
 </template>
 
 <style scoped>
@@ -181,7 +306,7 @@ onMounted(async () => {
   position: relative;
 }
 
-.loading, .error {
+.loading, .error, .loading-fallback {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -192,5 +317,28 @@ onMounted(async () => {
 
 .error {
   color: #ff5252;
+}
+
+.control-panel {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  display: flex;
+  gap: 10px;
+}
+
+.control-button {
+  background-color: #333;
+  color: white;
+  border: 1px solid #555;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.control-button:hover {
+  background-color: #444;
 }
 </style>

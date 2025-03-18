@@ -1,4 +1,5 @@
 import type { ProjectUpdate } from "~/schemas/project"
+import type { Project, Target } from "~/types"
 
 export const useProjectsApi = () => {
   const config = useRuntimeConfig()

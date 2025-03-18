@@ -20,26 +20,26 @@ declare interface Domain {
   }
 
 
-  declare interface ADPwnModule {
-    uid?: string;
-    attack_id: string;
-    execution_metric: string;
-    description: string;
-    name: string;
-    version: string;
-    author: string;
-    module_type: string;
-    loot_path: string;
-    key: string;
-    is_attack?: boolean; 
-  }
-  
-  declare interface ADPwnModuleInheritanceEdge {
-    previous_module: string;
-    next_module: string;
-  }
-  
-  declare interface ADPwnInheritanceGraph {
-    nodes: ADPwnModule[];
-    edges: ADPwnModuleInheritanceEdge[];
-  }
+declare interface ADPwnModule {
+  uid?: string;
+  attack_id: string;
+  execution_metric: string;
+  description: string;
+  name: string;
+  version: string;
+  author: string;
+  module_type: string;
+  loot_path: string;
+  key: string;
+  module_type: string; 
+}
+
+declare interface ADPwnModuleInheritanceEdge {
+  previous_module: string;
+  next_module: string;
+}
+
+declare interface ADPwnInheritanceGraph {
+  nodes: ADPwnModule[];
+  edges: ADPwnModuleInheritanceEdge[];
+}

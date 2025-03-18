@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useADPwnModuleApi } from '~/composable/useADPwnModuleApi';
-import { ref } from 'vue';
+import { ref, computed } from 'vue'
+import { useADPwnModuleApi } from '~/composable/useADPwnModuleApi'
+import { ADPwnModuleTypes } from '~/model/ADPwnModuleTypes';
 
 const ncolumns = [
   { key: 'badge', label: 'Type', sortable: true, direction: 'desc' as const },
@@ -22,19 +23,19 @@ const selectedModuleName = ref<string | null>(null);
 const tableRows = computed(() => {
   return modules.value?.map(module => ({
     id: module.uid,
-    badge: module.is_attack,
+    badge: module.module_type,
     name: module.name,
     description: module.description,
     version: module.version,
     author: module.author,
-    isAttack: module.is_attack,
+    moduleType: module.module_type,
     actions: module.uid
   })) || [];
 });
 
 const runModule = (moduleId: string, moduleName: string) => {
   selectedModuleId.value = moduleId;
-  selectedModuleName.value = moduleName
+  selectedModuleName.value = moduleName;
   showModal.value = true;
 };
 </script>
@@ -45,9 +46,10 @@ const runModule = (moduleId: string, moduleName: string) => {
       :columns="ncolumns" 
       :rows="tableRows"
     >
+    
       <template #badge-data="{ row }">
         <UBadge 
-          v-if="row.isAttack"
+          v-if="row.moduleType == ADPwnModuleTypes.ATTACK"
           color="red"
           variant="solid"
           label="Attack"
