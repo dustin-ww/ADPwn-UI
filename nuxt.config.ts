@@ -1,3 +1,5 @@
+import tailwindcss from "@tailwindcss/vite";
+
 export default defineNuxtConfig({
   runtimeConfig: {
     // Server-seitige Konfiguration (nicht im Browser verfügbar)
@@ -8,12 +10,19 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.API_BASE_URL || 'http://127.0.0.1:8081'
     }
   },
+  css: ['~/assets/css/main.css'],
+  vite: {
+    plugins: [
+      tailwindcss(),
+    ],
+  },
   compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
   modules: [
     '@nuxt/icon',
     '@pinia/nuxt',
     '@pinia-plugin-persistedstate/nuxt',
+    '@nuxt/ui'
   ],
 
   piniaPersistedstate: {
