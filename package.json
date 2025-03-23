@@ -12,22 +12,16 @@
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
     "@nuxt/icon": "^1.10.3",
-    "@nuxt/ui": "^2.21.1",
     "@pinia-plugin-persistedstate/nuxt": "^1.2.1",
     "@pinia/nuxt": "^0.5.5",
     "@vee-validate/yup": "^4.15.0",
     "dagre": "^0.8.5",
-    "nuxt": "^3.15.4",
+    "nuxt": "^3.16.0",
     "pinia": "^3.0.1",
     "v-network-graph": "^0.9.20",
     "vee-validate": "^4.15.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0",
     "yup": "^1.6.1"
-  },
-  "devDependencies": {
-    "@iconify-json/material-symbols": "^1.2.15",
-    "@iconify-json/mdi": "^1.2.3",
-    "@types/dagre": "^0.7.52"
   }
 }

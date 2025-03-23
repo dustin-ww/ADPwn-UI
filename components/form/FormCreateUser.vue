@@ -27,27 +27,27 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
     <h1>Create User</h1>
   <UForm :schema="schema" :state="userCreationState" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="Username" name="username">
+    <UFormField label="Username" name="username">
       <UInput v-model="userCreationState.username" />
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="Password" name="password">
+    <UFormField label="Password" name="password">
       <UInput v-model="userCreationState.password"/>
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="NTLM" name="ntlm">
+    <UFormField label="NTLM" name="ntlm">
       <UInput disabled v-model="userCreationState.password"/>
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup name="ntlmuse">
+    <UFormField name="ntlmuse">
         <UCheckbox label="use NTLM" :model-value="false" />
-    </UFormGroup>
+    </UFormField>
 
 
 
-    <UFormGroup name="isAdmin">
+    <UFormField name="isAdmin">
         <UCheckbox label="is Admin" :model-value="false" />
-    </UFormGroup>
+    </UFormField>
 
 
 

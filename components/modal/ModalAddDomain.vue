@@ -39,13 +39,13 @@ const isOpen = ref(false)
         </template>
 
         <UForm :schema="schema" :state="domainCreationState" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="Name*" name="name">
+    <UFormField label="Name*" name="name">
       <UInput v-model="domainCreationState.name" placeholder="Example Root Domain"/>
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="FQDN*" name="fqdn">
+    <UFormField label="FQDN*" name="fqdn">
       <UInput v-model="domainCreationState.fqdn" placeholder="ad.example.xyz"/>
-    </UFormGroup>
+    </UFormField>
 
     <UButton color="red" type="submit">
       Create

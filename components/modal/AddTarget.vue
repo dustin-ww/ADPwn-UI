@@ -60,13 +60,13 @@ async function onSubmit(event: FormSubmitEvent<TargetSchema>) {
         <h1 class="text-center text-2xl mt-5">Add Target</h1>
       <div class="p-4">
         <UForm :schema="targetSchema" :state="targetState" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="IP (allowed: 0.0.0.0 or 0.0.0.0/24)" name="ip">
+    <UFormField label="IP (allowed: 0.0.0.0 or 0.0.0.0/24)" name="ip">
       <UInput v-model="targetState.ip" />
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="Name" name="name">
+    <UFormField label="Name" name="name">
       <UInput v-model="targetState.name" />
-    </UFormGroup>
+    </UFormField>
 
     <UButton color="red" :loading="isLoading" @click="isOpen = false" type="submit">
       {{ isLoading ? 'Adding Target...' : 'Add Target' }}

@@ -2,7 +2,7 @@
 import { reactive, onMounted, ref } from "vue"
 import * as vNG from "v-network-graph"
 import { useADPwnModuleApi } from '~/composable/useADPwnModuleApi';
-import { type ADPwnInheritanceGraph } from "~/types";
+import type { ADPwnInheritanceGraph } from "~/types";
 
 // Stelle sicher, dass dagre nur clientseitig importiert wird
 let dagre: any = null

@@ -16,7 +16,7 @@ const props = defineProps({
 })
 </script>
 <template>
-  <UVerticalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800">
+  <UNavigationMenu orientation="vertical" :items="links" class="border-b border-gray-200 dark:border-gray-800">
     <template #default="{ link }">
       <template v-if="link.type === 'divider'">
         <hr class="my-2 border-gray-300 dark:border-gray-700 pointer-events-none" />
@@ -25,5 +25,5 @@ const props = defineProps({
         <span class="relative group-hover:text-red-500">{{ link.label }}</span>
       </template>
     </template>
-  </UVerticalNavigation>
+  </UNavigationMenu>
 </template>

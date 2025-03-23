@@ -39,13 +39,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         </template>
 
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-    <UFormGroup label="Name" name="email">
+    <UFormField label="Name" name="email">
       <UInput v-model="state.email" />
-    </UFormGroup>
+    </UFormField>
 
-    <UFormGroup label="Description" name="password">
+    <UFormField label="Description" name="password">
       <UInput v-model="state.password" type="password" />
-    </UFormGroup>
+    </UFormField>
 
     <UButton type="submit">
       Submit

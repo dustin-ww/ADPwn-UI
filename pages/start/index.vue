@@ -64,9 +64,21 @@ const handleCreate = async (projectData: any) => {
             v-model:expand="expand"
             :rows="tableRows"
             :columns="[
-              { key: 'name', label: 'Name', sortable: true, direction: 'desc' as const},
-              { key: 'description', label: 'Description', sortable: true, direction: 'desc' as const }
-            ]"
+    { 
+      id: 'name',
+      key: 'name', 
+      label: 'Name', 
+      sortable: true, 
+      direction: 'desc' as const
+    },
+    { 
+      id: 'description',
+      key: 'description', 
+      label: 'Description', 
+      sortable: true, 
+      direction: 'desc' as const
+    }
+  ]"
             class="min-w-[700px]"
           >
             <template #expand-action="{ row, isExpanded, toggle }">

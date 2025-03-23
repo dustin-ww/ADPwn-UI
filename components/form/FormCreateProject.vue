@@ -67,13 +67,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       class="space-y-4"
       @submit="onSubmit"
     >
-      <UFormGroup label="Project Name" name="name">
+      <UFormField label="Project Name" name="name">
         <UInput 
           v-model="state.name" 
           placeholder="Enter project name"
           autofocus
         />
-      </UFormGroup>
+      </UFormField>
 
       <UButton 
         type="submit" 

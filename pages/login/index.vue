@@ -28,13 +28,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
             ADpwn - Login
         </h1>
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmit">
-            <UFormGroup label="Email" name="email">
+            <UFormField label="Email" name="email">
                 <UInput v-model="state.email" />
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup label="Password" name="password">
+            <UFormField label="Password" name="password">
                 <UInput v-model="state.password" type="password" />
-            </UFormGroup>
+            </UFormField>
 
             <UButton color="red" type="submit">
                 Submit

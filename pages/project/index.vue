@@ -102,15 +102,15 @@ const singleTargetIP = ref('')
   <SharedHeading heading="Manage Project"></SharedHeading>
   <div class="grid justify-items-center">
     <UForm :schema="projectSchema" :state="projectState" class="space-y-4 w-2/5" @submit="onSubmit">
-      <UFormGroup label="UID" name="uid" >
+      <UFormField label="UID" name="uid" >
         <UInput disabled :placeholder="project?.uid"/>
-      </UFormGroup>
-      <UFormGroup label="Name" name="name" >
+      </UFormField>
+      <UFormField label="Name" name="name" >
         <UInput :placeholder="project?.name" v-model="projectState.name" />
-      </UFormGroup>
-      <UFormGroup label="Description" name="description">
+      </UFormField>
+      <UFormField label="Description" name="description">
         <UTextarea :placeholder="project?.description" v-model="projectState.description"/>
-      </UFormGroup>
+      </UFormField>
       <UButton color="red" type="submit">
         Update
       </UButton>
